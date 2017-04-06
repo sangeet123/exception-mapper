@@ -1,24 +1,28 @@
 package exception.mapper;
 
+import error.ValidationErrorInfo;
+import error.ValidationErrorProcessor;
 import exceptions.ConflictException;
 import exceptions.NotFoundException;
 import exceptions.ServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by sangeet on 4/4/2017.
  */
 @ControllerAdvice()
 @RestController()
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler{
   private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+  @Autowired()
+  private ValidationErrorProcessor errorProcessor;
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(value = NotFoundException.class)
@@ -44,4 +48,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public void handleException(final Exception e){
     LOGGER.error("{}",e);
   }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(value=HttpStatus.BAD_REQUEST)
+  @ResponseBody()
+  public ValidationErrorInfo handleMethodArgumentNotValid(final MethodArgumentNotValidException e) {
+    LOGGER.error("{}",e);
+    final BindingResult result = e.getBindingResult();
+    return errorProcessor.processFieldErrors(result.getFieldErrors());
+  }
+
 }
