@@ -27,20 +27,21 @@ public class GlobalExceptionHandler{
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(value = NotFoundException.class)
   public void handleBaseException(final NotFoundException e){
-    LOGGER.error("Request resource not found{}",e.getRootCause());
+    LOGGER.error("Request resource not found{}",e);
   }
 
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(value = ConflictException.class)
-  public String handleException(final ConflictException e){
-    LOGGER.error("Request resource exist{}",e.getRootCause());
-    return e.getRootCause().getMessage();
+  @ResponseBody()
+  public ValidationErrorInfo handleException(final ConflictException e){
+    LOGGER.error("Request resource exist{}",e);
+    return e.getValidationErrorInfo();
   }
 
   @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
   @ExceptionHandler(value = ServiceUnavailableException.class)
   public void handleException(final ServiceUnavailableException e){
-    LOGGER.error("{}",e.getRootCause());
+    LOGGER.error("{}",e);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -52,7 +53,7 @@ public class GlobalExceptionHandler{
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(value=HttpStatus.BAD_REQUEST)
   @ResponseBody()
-  public ValidationErrorInfo handleMethodArgumentNotValid(final MethodArgumentNotValidException e) {
+  public ValidationErrorInfo handleException(final MethodArgumentNotValidException e) {
     LOGGER.error("{}",e);
     final BindingResult result = e.getBindingResult();
     return errorProcessor.processFieldErrors(result.getFieldErrors());

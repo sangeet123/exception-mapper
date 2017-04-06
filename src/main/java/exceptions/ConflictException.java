@@ -1,20 +1,30 @@
 package exceptions;
 
+import error.ValidationErrorInfo;
+
 /**
  * Created by sangeet on 4/5/2017.
  */
 public class ConflictException extends RuntimeException {
-  private Throwable rootCause;
-  public ConflictException(){
+  private ValidationErrorInfo validationErrorInfo;
+
+  public ConflictException(final ValidationErrorInfo validationErrorInfo) {
+    this.validationErrorInfo = validationErrorInfo;
+  }
+
+  public ConflictException() {
     super();
   }
-  public ConflictException(final String mesg){
+
+  public ConflictException(final String mesg) {
     super(mesg);
   }
-  public ConflictException(final Throwable ex){
-    this.rootCause = ex;
+
+  public ValidationErrorInfo getValidationErrorInfo() {
+    return validationErrorInfo;
   }
-  public Throwable getRootCause() {
-    return rootCause;
+
+  public void setValidationErrorInfo(ValidationErrorInfo validationErrorInfo) {
+    this.validationErrorInfo = validationErrorInfo;
   }
 }
