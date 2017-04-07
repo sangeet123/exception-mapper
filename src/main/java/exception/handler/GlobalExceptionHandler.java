@@ -1,13 +1,14 @@
-package exception.mapper;
+package exception.handler;
 
 import error.ValidationErrorInfo;
 import error.ValidationErrorProcessor;
-import exceptions.ConflictException;
+import exception.mapper.DataIntegrityViolationMapper;
 import exceptions.NotFoundException;
 import exceptions.ServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,18 +25,13 @@ public class GlobalExceptionHandler{
   @Autowired()
   private ValidationErrorProcessor errorProcessor;
 
+  @Autowired()
+  private DataIntegrityViolationMapper dataIntegrityViolationMapper;
+
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(value = NotFoundException.class)
   public void handleBaseException(final NotFoundException e){
     LOGGER.error("Request resource not found{}",e);
-  }
-
-  @ResponseStatus(HttpStatus.CONFLICT)
-  @ExceptionHandler(value = ConflictException.class)
-  @ResponseBody()
-  public ValidationErrorInfo handleException(final ConflictException e){
-    LOGGER.error("Request resource exist{}",e);
-    return e.getValidationErrorInfo();
   }
 
   @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
@@ -57,6 +53,15 @@ public class GlobalExceptionHandler{
     LOGGER.error("{}",e);
     final BindingResult result = e.getBindingResult();
     return errorProcessor.processFieldErrors(result.getFieldErrors());
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  @ResponseStatus(value=HttpStatus.CONFLICT)
+  @ResponseBody()
+  public ValidationErrorInfo handleException(final DataIntegrityViolationException e){
+    LOGGER.error("{}",e);
+    ValidationErrorInfo validationErrorInfo = dataIntegrityViolationMapper.mapExceptoin(e);
+    return validationErrorInfo;
   }
 
 }
