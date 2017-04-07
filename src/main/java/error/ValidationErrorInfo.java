@@ -7,7 +7,15 @@ import java.util.List;
  * Created by sangeet on 4/5/2017.
  */
 public class ValidationErrorInfo {
-  public ValidationErrorInfo() {}
+  private String context;
+
+  public ValidationErrorInfo() {
+    this.context = Config.appContext;
+  }
+
+  public String getContext(){
+    return this.context;
+  }
 
   private final List<CustomFieldError> fieldErrors = new ArrayList<>();
 
