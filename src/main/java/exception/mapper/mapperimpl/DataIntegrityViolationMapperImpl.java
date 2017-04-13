@@ -8,7 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
  * Created by sangeet on 4/6/2017.
  */
 public class DataIntegrityViolationMapperImpl implements DataIntegrityViolationMapper {
-  @Override public ValidationErrorInfo mapExceptoin(DataIntegrityViolationException ex) {
+  @Override public ValidationErrorInfo mapException(DataIntegrityViolationException ex) {
     return null;
   }
 }
