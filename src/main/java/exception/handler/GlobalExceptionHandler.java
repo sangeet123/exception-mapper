@@ -26,17 +26,17 @@ import org.springframework.web.bind.annotation.*;
 
   @ResponseStatus(HttpStatus.NOT_FOUND) @ExceptionHandler(value = NotFoundException.class) public void handleBaseException(
       final NotFoundException e) {
-    LOGGER.error("Request resource not found{}", e);
+    LOGGER.debug("Request resource not found{}", e);
   }
 
   @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE) @ExceptionHandler(value = ServiceUnavailableException.class) public void handleException(
       final ServiceUnavailableException e) {
-    LOGGER.error("{}", e);
+    LOGGER.debug("{}", e);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) @ExceptionHandler(value = Exception.class) public void handleException(
       final Exception e) {
-    LOGGER.error("{}", e);
+    LOGGER.debug("{}", e);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class) @ResponseStatus(value = HttpStatus.BAD_REQUEST) @ResponseBody() public ValidationErrorInfo handleException(
